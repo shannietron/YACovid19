@@ -1,24 +1,29 @@
-deltaRatio=[];
-ratio=[];
-deltaTests=[];
-deltaPos=[];
-
-getHistoricData("https://covidtracking.com/api/v1/states/daily.json","NY");
+var deltaRatio=[];
+var ratio=[];
+var deltaTests=[];
+var deltaPos=[];
+var myChart;
+createChart();
 
 function updateState(selectedState) {
-    state=selectedState.value;
-    myChart.clear();
-    deltaRatio=[];
-    ratio=[];
-    deltaTests=[];
-    deltaPos=[];
-    getHistoricData("https://covidtracking.com/api/v1/states/daily.json",state);
-    myChart.update();
+  console.log("updateState")
+  state=selectedState.value;
+  deleteOldData();
+  createChart();
+  getHistoricData("https://covidtracking.com/api/v1/states/daily.json",state);
 
 }
 
+function deleteOldData(){
+  deltaRatio=[];
+  ratio=[];
+  deltaTests=[];
+  deltaPos=[];
+  myChart.destroy()
+}
+function createChart(){
 var ctx = document.getElementById('Covid19').getContext('2d');
-var myChart = new Chart(ctx, {
+myChart = new Chart(ctx, {
     type: 'line',
     data: {
         datasets: [{
@@ -102,14 +107,16 @@ var myChart = new Chart(ctx, {
     }
 
 });
+}
 
 
 async function getHistoricData(url,state) {
+
   const response = await fetch(url);
   const responseJson = await response.json();
+
   for (key in responseJson) {
     if(responseJson[key].state==state){
-      console.log(state);
       formattedDate = moment(responseJson[key].date,"YYYYMMDD").format("YYYY-MM-DDTHH:mm:ss");
       deltaRatio.push({
         x: new Date(formattedDate),
@@ -131,6 +138,5 @@ async function getHistoricData(url,state) {
       });
     }
   }
-
   myChart.update();
 }
