@@ -6,7 +6,6 @@ var deltaDeaths = [];
 var myChart;
 createChart();
 getHistoricData("https://covidtracking.com/api/v1/states/daily.json", "NY");
-setStateHeader("NY");
 
 
 function updateState(selectedState) {
@@ -129,7 +128,21 @@ function createChart() {
             min: 0
           }
         }]
-      }
+      },
+      plugins: {
+        zoom: {
+          pan: {
+            enabled: true,
+            mode: 'x',
+            speed:0.1
+          },
+          zoom: {
+            enabled: true,
+            mode: 'x',
+            speed:0.1
+          }
+        }
+      },
     }
 
   });
