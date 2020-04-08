@@ -107,9 +107,9 @@ function createChart() {
       ]
     },
     options: {
-      responsive: true,
+      responsive: false,
       aspectRatio: 0.5,
-      maintainAspectRatio: false,
+      maintainAspectRatio: true,
       scales: {
         xAxes: [{
           type: 'time',
@@ -132,12 +132,12 @@ function createChart() {
       plugins: {
         zoom: {
           pan: {
-            enabled: true,
+            enabled: false,
             mode: 'x',
             speed:0.1
           },
           zoom: {
-            enabled: true,
+            enabled: false,
             mode: 'x',
             speed:0.1
           }
