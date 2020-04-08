@@ -2,6 +2,7 @@ var deltaRatio = [];
 var ratio = [];
 var deltaTests = [];
 var deltaPos = [];
+var deltaDeaths = [];
 var myChart;
 createChart();
 getHistoricData("https://covidtracking.com/api/v1/states/daily.json", "NY");
@@ -23,6 +24,7 @@ function deleteOldData() {
   ratio = [];
   deltaTests = [];
   deltaPos = [];
+  deltaDeaths = [];
   myChart.destroy()
 }
 
@@ -89,6 +91,20 @@ function createChart() {
           type: 'bar',
           yAxisID: "y-axis-1",
         },
+        {
+          label: 'Daily Deaths',
+          data: deltaDeaths,
+          borderWidth: 1,
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          backgroundColor: "black",
+          borderColor: "black",
+          fill: true,
+          tension: 0,
+          showLine: true,
+          type: 'bar',
+          yAxisID: "y-axis-1",
+        },
       ]
     },
     options: {
@@ -146,6 +162,10 @@ async function getHistoricData(url, state) {
         deltaPos.push({
           x: new Date(formattedDate),
           y: Math.abs(Number(responseJson[key].positiveIncrease))
+        });
+        deltaDeaths.push({
+          x: new Date(formattedDate),
+          y: Math.abs(Number(responseJson[key].deathIncrease))
         });
       }
     }
