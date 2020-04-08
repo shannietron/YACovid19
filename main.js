@@ -98,6 +98,7 @@ function createChart() {
       scales: {
         xAxes: [{
           type: 'time',
+          offset: true
         }],
         yAxes: [{
           id: 'y-axis-1',
@@ -147,7 +148,6 @@ async function getHistoricData(url, state) {
           y: Math.abs(Number(responseJson[key].positiveIncrease))
         });
       }
-
     }
   }
   myChart.update();
