@@ -107,7 +107,7 @@ function createChart() {
       ]
     },
     options: {
-      responsive: false,
+      responsive: true,
       aspectRatio: 0.5,
       maintainAspectRatio: true,
       scales: {
