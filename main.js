@@ -134,12 +134,12 @@ function createChart() {
           pan: {
             enabled: false,
             mode: 'x',
-            speed:0.1
+            speed: 0.1
           },
           zoom: {
             enabled: false,
             mode: 'x',
-            speed:0.1
+            speed: 0.1
           }
         }
       },
