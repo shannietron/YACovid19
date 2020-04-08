@@ -127,24 +127,27 @@ async function getHistoricData(url, state) {
   for (key in responseJson) {
     if (responseJson[key].state == state) {
       formattedDate = moment(responseJson[key].date, "YYYYMMDD").format("YYYY-MM-DDTHH:mm:ss");
-      deltaRatio.push({
-        x: new Date(formattedDate),
-        y: Number((responseJson[key].positiveIncrease) / (responseJson[key].totalTestResultsIncrease)),
-      });
+      if (responseJson[key].positiveIncrease && responseJson[key].totalTestResultsIncrease) {
+        deltaRatio.push({
+          x: new Date(formattedDate),
+          y: Math.abs(Number((responseJson[key].positiveIncrease) / (responseJson[key].totalTestResultsIncrease)))
+        });
 
-      ratio.push({
-        x: new Date(formattedDate),
-        y: Number((responseJson[key].positive) / (responseJson[key].totalTestResults))
-      });
+        ratio.push({
+          x: new Date(formattedDate),
+          y: Math.abs(Number((responseJson[key].positive) / (responseJson[key].totalTestResults)))
+        });
 
-      deltaTests.push({
-        x: new Date(formattedDate),
-        y: Number(responseJson[key].totalTestResultsIncrease)
-      });
-      deltaPos.push({
-        x: new Date(formattedDate),
-        y: Number(responseJson[key].positiveIncrease)
-      });
+        deltaTests.push({
+          x: new Date(formattedDate),
+          y: Math.abs(Number(responseJson[key].totalTestResultsIncrease))
+        });
+        deltaPos.push({
+          x: new Date(formattedDate),
+          y: Math.abs(Number(responseJson[key].positiveIncrease))
+        });
+      }
+
     }
   }
   myChart.update();
