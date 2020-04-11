@@ -1,12 +1,11 @@
 var deltaRatio = [];
 var ratio = [];
-var deltaTests = [];
+var deltaNeg = [];
 var deltaPos = [];
 var deltaDeaths = [];
 var myChart;
 createChart();
 getHistoricData("https://covidtracking.com/api/v1/states/daily.json", "NY");
-
 
 function updateState(selectedState) {
   state = selectedState.value;
@@ -21,7 +20,7 @@ function updateState(selectedState) {
 function deleteOldData() {
   deltaRatio = [];
   ratio = [];
-  deltaTests = [];
+  deltaNeg = [];
   deltaPos = [];
   deltaDeaths = [];
   myChart.destroy()
@@ -63,13 +62,13 @@ function createChart() {
           yAxisID: "y-axis-0",
         },
         {
-          label: 'Daily Tests',
-          data: deltaTests,
+          label: 'Daily Deaths',
+          data: deltaDeaths,
           borderWidth: 1,
           pointRadius: 3,
           pointHoverRadius: 5,
-          backgroundColor: "#527318",
-          borderColor: "#527318",
+          backgroundColor: "black",
+          borderColor: "black",
           fill: true,
           tension: 0,
           showLine: true,
@@ -89,20 +88,22 @@ function createChart() {
           showLine: true,
           type: 'bar',
           yAxisID: "y-axis-1",
+          stack: "cases"
         },
         {
-          label: 'Daily Deaths',
-          data: deltaDeaths,
+          label: 'Daily Negative Tests',
+          data: deltaNeg,
           borderWidth: 1,
           pointRadius: 3,
           pointHoverRadius: 5,
-          backgroundColor: "black",
-          borderColor: "black",
+          backgroundColor: "#639a67",
+          borderColor: "#639a67",
           fill: true,
           tension: 0,
           showLine: true,
           type: 'bar',
           yAxisID: "y-axis-1",
+          stack: "cases"
         },
       ]
     },
@@ -113,12 +114,14 @@ function createChart() {
       scales: {
         xAxes: [{
           type: 'time',
-          offset: true
+          offset: true,
+          stacked: true
         }],
         yAxes: [{
           id: 'y-axis-1',
           type: 'linear',
           position: 'left',
+          stacked: true
         }, {
           id: 'y-axis-0',
           type: 'linear',
@@ -143,6 +146,9 @@ function createChart() {
           }
         }
       },
+      tooltips: {
+        mode: 'index',
+      },
     }
 
   });
@@ -160,17 +166,17 @@ async function getHistoricData(url, state) {
       if (responseJson[key].positiveIncrease && responseJson[key].totalTestResultsIncrease) {
         deltaRatio.push({
           x: new Date(formattedDate),
-          y: Math.abs(Number((responseJson[key].positiveIncrease) / (responseJson[key].totalTestResultsIncrease)))
+          y: round(Math.abs(Number((responseJson[key].positiveIncrease) / (responseJson[key].totalTestResultsIncrease))), 2)
         });
 
         ratio.push({
           x: new Date(formattedDate),
-          y: Math.abs(Number((responseJson[key].positive) / (responseJson[key].totalTestResults)))
+          y: round(Math.abs(Number((responseJson[key].positive) / (responseJson[key].totalTestResults))), 2)
         });
 
-        deltaTests.push({
+        deltaNeg.push({
           x: new Date(formattedDate),
-          y: Math.abs(Number(responseJson[key].totalTestResultsIncrease))
+          y: Math.abs(Number(responseJson[key].totalTestResultsIncrease - responseJson[key].positiveIncrease))
         });
         deltaPos.push({
           x: new Date(formattedDate),
@@ -184,4 +190,9 @@ async function getHistoricData(url, state) {
     }
   }
   myChart.update();
+}
+
+
+function round(value, decimals) {
+  return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
 }
