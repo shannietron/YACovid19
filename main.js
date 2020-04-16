@@ -4,6 +4,8 @@ var deltaNeg = [];
 var deltaPos = [];
 var deltaDeaths = [];
 var myChart;
+var type = 'linear';
+
 createChart();
 getHistoricData("https://covidtracking.com/api/v1/states/daily.json", "NY");
 
@@ -120,7 +122,7 @@ function createChart() {
         }],
         yAxes: [{
           id: 'y-axis-1',
-          type: 'linear',
+          type: type,
           position: 'right',
           stacked: true,
           scaleLabel: {
@@ -206,6 +208,14 @@ async function getHistoricData(url, state) {
   }
   myChart.update();
 }
+
+document.getElementById('toggleScale').addEventListener('click', function() {
+  this.innerHTML = "change scale to " + type;
+  type = type === 'linear' ? 'logarithmic' : 'linear';
+  var yAxes = myChart.options.scales.yAxes;
+  yAxes[0].type = type;
+  myChart.update();
+});
 
 
 function round(value, decimals) {
