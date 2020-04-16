@@ -7,6 +7,7 @@ var myChart;
 createChart();
 getHistoricData("https://covidtracking.com/api/v1/states/daily.json", "NY");
 
+
 function updateState(selectedState) {
   state = selectedState.value;
   stateName = selectedState.options[selectedState.selectedIndex].text;
@@ -120,15 +121,29 @@ function createChart() {
         yAxes: [{
           id: 'y-axis-1',
           type: 'linear',
-          position: 'left',
-          stacked: true
+          position: 'right',
+          stacked: true,
+          scaleLabel: {
+            display: true,
+            labelString: 'Number of Cases'
+          },
+          ticks: {
+            stepSize: 1000
+          },
         }, {
           id: 'y-axis-0',
           type: 'linear',
-          position: 'right',
+          position: 'left',
           ticks: {
             max: 1,
             min: 0
+          },
+          gridLines: {
+            display: false
+          },
+          scaleLabel: {
+            display: true,
+            labelString: 'Positive  Ratio'
           }
         }]
       },
