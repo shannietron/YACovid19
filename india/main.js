@@ -2,8 +2,10 @@ var deltaRatio = [];
 var ratio = [];
 var totalNeg = [];
 var totalPos = [];
+var deltaPos = [];
 var deltaDeaths = [];
 var unconfirmed = [];
+var deltaNeg = [];
 var myChart;
 state_test_data_url = "https://api.covid19india.org/state_test_data.json"
 createChart();
@@ -23,8 +25,10 @@ function deleteOldData() {
   ratio = [];
   totalNeg = [];
   totalPos = [];
+  deltaPos = [];
   deltaDeaths = [];
   unconfirmed = [];
+  deltaNeg = [];
   myChart.destroy()
 }
 
@@ -51,31 +55,39 @@ function createChart() {
           yAxisID: "y-axis-0",
         },
         {
-          label: 'Total Positives',
-          data: totalPos,
+          label: 'Daily positive test ratio',
+          data: deltaRatio,
+          borderWidth: 0,
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          backgroundColor: "rgba(255,0,0,0.1)",
+          borderColor: "#fc0107",
+          fill: true,
+          tension: 0,
+          showLine: true,
+          yAxisID: "y-axis-0",
+        },
+        {
+          label: 'delta Positives',
+          data: deltaPos,
           borderWidth: 1,
           pointRadius: 3,
           pointHoverRadius: 5,
           backgroundColor: "#fe346e",
           borderColor: "#fe346e",
-          fill: true,
-          tension: 0,
-          showLine: true,
           type: 'bar',
           yAxisID: "y-axis-1",
           stack: "cases"
         },
         {
-          label: 'Total Negative Tests',
-          data: totalNeg,
+          label: 'Delta Negative Tests',
+          data: deltaNeg,
           borderWidth: 1,
           pointRadius: 3,
           pointHoverRadius: 5,
           backgroundColor: "#639a67",
           borderColor: "#639a67",
           fill: true,
-          tension: 0,
-          showLine: true,
           type: 'bar',
           yAxisID: "y-axis-1",
           stack: "cases"
@@ -129,7 +141,6 @@ function createChart() {
         mode: 'index',
       },
     }
-
   });
 }
 
@@ -139,11 +150,22 @@ async function getHistoricData(url, state) {
   const response = await fetch(url);
   const responseJson = await response.json();
   states_tested_data = responseJson.states_tested_data
+  var lastPos = 0;
+  var lastNeg = 0;
+  var currentPos = 0;
+  var currentNeg = 0;
+  var dailyRatio = 0;
   for (key in states_tested_data) {
     if (states_tested_data[key].state == state) {
       if (states_tested_data[key].positive) {
         formattedDate = moment(states_tested_data[key].updatedon, 'DD/MM/YYYY').format("YYYY-MM-DDTHH:mm:ss");
         cumulativeRatio = round(Math.abs(Number(states_tested_data[key].positive / states_tested_data[key].totaltested)), 2);
+        currentPos = states_tested_data[key].positive;
+        currentNeg = states_tested_data[key].negative;
+        currentDeltaPos = Math.max(0, (currentPos - lastPos));
+        currentDeltaNeg = Math.max(0, (currentNeg - lastNeg));
+        dailyRatio = round((currentDeltaPos / (currentDeltaPos + currentDeltaNeg)), 2)
+
         ratio.push({
           x: new Date(formattedDate),
           y: cumulativeRatio
@@ -154,26 +176,47 @@ async function getHistoricData(url, state) {
         });
         totalPos.push({
           x: new Date(formattedDate),
-          y: Number(states_tested_data[key].positive)
+          y: Number(currentPos)
         })
         totalNeg.push({
           x: new Date(formattedDate),
-          y: Number(states_tested_data[key].negative)
+          y: Number(currentNeg)
         })
-      }
+        deltaPos.push({
+          x: new Date(formattedDate),
+          y: Number(currentDeltaPos)
+        })
+        deltaNeg.push({
+          x: new Date(formattedDate),
+          y: Number(currentDeltaNeg)
+        })
+        deltaRatio.push({
+          x: new Date(formattedDate),
+          y: Number(dailyRatio)
+        })
+        lastPos = states_tested_data[key].positive;
+        lastNeg = states_tested_data[key].negative;
 
+      }
       myChart.update();
     }
   }
-}
 
+}
 
 function round(value, decimals) {
   return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
 }
 
+
 function diff(ary) {
   var newA = [];
-  for (var i = 1; i < ary.length; i++) newA.push(ary[i] - ary[i - 1])
+  for (var i = 1; i < ary.length; i++) {
+    newA.push({
+      x: (ary[i].x),
+      y: (Math.max(0, (ary[i].y - ary[i - 1].y)))
+    })
+  }
+  deltaPos = newA;
   return newA;
 }
