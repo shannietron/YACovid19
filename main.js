@@ -7,17 +7,24 @@ var myChart;
 var type = 'linear';
 
 createChart();
-getHistoricData("https://covidtracking.com/api/v1/states/daily.json", "NY");
+// Plot US data when we start
+getHistoricData("https://covidtracking.com/api/v1/us/daily.json", "US");
 
 
 function updateState(selectedState) {
   state = selectedState.value;
-  stateName = selectedState.options[selectedState.selectedIndex].text;
-  deleteOldData();
-  createChart();
-  getHistoricData("https://covidtracking.com/api/v1/states/daily.json", state);
-  setStateHeader(state);
-
+  if (state == 'US') {
+    deleteOldData();
+    createChart();
+    getHistoricData("https://covidtracking.com/api/v1/us/daily.json", state);
+    setStateHeader("United States");
+  } else {
+    stateName = selectedState.options[selectedState.selectedIndex].text;
+    deleteOldData();
+    createChart();
+    getHistoricData("https://covidtracking.com/api/v1/states/daily.json", state);
+    setStateHeader(stateName);
+  }
 }
 
 function deleteOldData() {
@@ -30,7 +37,7 @@ function deleteOldData() {
 }
 
 function setStateHeader(state) {
-  document.getElementById('stateHeader').innerHTML = stateName;
+  document.getElementById('stateHeader').innerHTML = state;
 }
 
 function createChart() {
@@ -178,7 +185,7 @@ async function getHistoricData(url, state) {
   const responseJson = await response.json();
 
   for (key in responseJson) {
-    if (responseJson[key].state == state) {
+    if ((state == 'US') || (responseJson[key].state == state)) {
       formattedDate = moment(responseJson[key].date, "YYYYMMDD").format("YYYY-MM-DDTHH:mm:ss");
       if (responseJson[key].positiveIncrease && responseJson[key].totalTestResultsIncrease) {
         deltaRatio.push({
