@@ -3,6 +3,7 @@ var ratio = [];
 var deltaNeg = [];
 var deltaPos = [];
 var deltaDeaths = [];
+var deltaHosp=[];
 var myChart;
 var type = 'linear';
 
@@ -33,6 +34,7 @@ function deleteOldData() {
   deltaNeg = [];
   deltaPos = [];
   deltaDeaths = [];
+  deltaHosp=[];
   myChart.destroy()
 }
 
@@ -72,20 +74,6 @@ function createChart() {
           yAxisID: "y-axis-0",
         },
         {
-          label: 'Daily Deaths',
-          data: deltaDeaths,
-          borderWidth: 1,
-          pointRadius: 3,
-          pointHoverRadius: 5,
-          backgroundColor: "black",
-          borderColor: "black",
-          fill: true,
-          tension: 0,
-          showLine: true,
-          type: 'bar',
-          yAxisID: "y-axis-1",
-        },
-        {
           label: 'Daily Positives',
           data: deltaPos,
           borderWidth: 1,
@@ -114,6 +102,34 @@ function createChart() {
           type: 'bar',
           yAxisID: "y-axis-1",
           stack: "cases"
+        },
+        {
+          label: 'Daily Deaths',
+          data: deltaDeaths,
+          borderWidth: 1,
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          backgroundColor: "black",
+          borderColor: "black",
+          fill: true,
+          tension: 0,
+          showLine: true,
+          type: 'bar',
+          yAxisID: "y-axis-1",
+        },
+        {
+          label: 'Daily Hospitalization',
+          data: deltaHosp,
+          borderWidth: 1,
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          backgroundColor: "#8c9ec5",
+          borderColor: "#6886c5",
+          fill: true,
+          tension: 0,
+          showLine: true,
+          type: 'line',
+          yAxisID: "y-axis-1",
         },
       ]
     },
@@ -209,6 +225,10 @@ async function getHistoricData(url, state) {
         deltaDeaths.push({
           x: new Date(formattedDate),
           y: Math.abs(Number(responseJson[key].deathIncrease))
+        });
+        deltaHosp.push({
+          x: new Date(formattedDate),
+          y: Math.abs(Number(responseJson[key].hospitalizedIncrease))
         });
       }
     }
