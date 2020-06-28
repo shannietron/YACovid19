@@ -3,7 +3,8 @@ var ratio = [];
 var deltaNeg = [];
 var deltaPos = [];
 var deltaDeaths = [];
-var deltaHosp=[];
+var deltaHosp = [];
+var movingAverageRatio = [];
 var myChart;
 var type = 'linear';
 
@@ -34,7 +35,8 @@ function deleteOldData() {
   deltaNeg = [];
   deltaPos = [];
   deltaDeaths = [];
-  deltaHosp=[];
+  deltaHosp = [];
+  movingAverageRatio = []
   myChart.destroy()
 }
 
@@ -202,37 +204,40 @@ async function getHistoricData(url, state) {
 
   for (key in responseJson) {
     if ((state == 'US') || (responseJson[key].state == state)) {
-      formattedDate = moment(responseJson[key].date, "YYYYMMDD").format("YYYY-MM-DDTHH:mm:ss");
-      if (responseJson[key].positiveIncrease && responseJson[key].totalTestResultsIncrease) {
-        deltaRatio.push({
-          x: new Date(formattedDate),
-          y: round(Math.abs(Number((responseJson[key].positiveIncrease) / (responseJson[key].totalTestResultsIncrease))), 2)
-        });
+      if (moment(responseJson[key].date, "YYYYMMDD") > moment("20200320")) { // ignore dates before March 20
+        formattedDate = moment(responseJson[key].date, "YYYYMMDD").format("YYYY-MM-DDTHH:mm:ss");
+        if (responseJson[key].positiveIncrease && responseJson[key].totalTestResultsIncrease) {
+          deltaRatio.push({
+            x: new Date(formattedDate),
+            y: round(Math.abs(Number((responseJson[key].positiveIncrease) / (responseJson[key].totalTestResultsIncrease))), 2)
+          });
 
-        ratio.push({
-          x: new Date(formattedDate),
-          y: round(Math.abs(Number((responseJson[key].positive) / (responseJson[key].totalTestResults))), 2)
-        });
+          ratio.push({
+            x: new Date(formattedDate),
+            y: round(Math.abs(Number((responseJson[key].positive) / (responseJson[key].totalTestResults))), 2)
+          });
 
-        deltaNeg.push({
-          x: new Date(formattedDate),
-          y: Math.abs(Number(responseJson[key].totalTestResultsIncrease - responseJson[key].positiveIncrease))
-        });
-        deltaPos.push({
-          x: new Date(formattedDate),
-          y: Math.abs(Number(responseJson[key].positiveIncrease))
-        });
-        deltaDeaths.push({
-          x: new Date(formattedDate),
-          y: Math.abs(Number(responseJson[key].deathIncrease))
-        });
-        deltaHosp.push({
-          x: new Date(formattedDate),
-          y: Math.abs(Number(responseJson[key].hospitalizedIncrease))
-        });
+          deltaNeg.push({
+            x: new Date(formattedDate),
+            y: Math.abs(Number(responseJson[key].totalTestResultsIncrease - responseJson[key].positiveIncrease))
+          });
+          deltaPos.push({
+            x: new Date(formattedDate),
+            y: Math.abs(Number(responseJson[key].positiveIncrease))
+          });
+          deltaDeaths.push({
+            x: new Date(formattedDate),
+            y: Math.abs(Number(responseJson[key].deathIncrease))
+          });
+          deltaHosp.push({
+            x: new Date(formattedDate),
+            y: Math.abs(Number(responseJson[key].hospitalizedIncrease))
+          });
+        }
       }
     }
   }
+
   myChart.update();
 }
 
@@ -244,7 +249,40 @@ document.getElementById('toggleScale').addEventListener('click', function() {
   myChart.update();
 });
 
+document.getElementById('addMovingAverage').addEventListener('click', function() {
+  avgWindowInput = parseInt(document.getElementById('avgWindowInput').value)
+  addMovingAverage(myChart, avgWindowInput);
+});
+
 
 function round(value, decimals) {
   return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+}
+
+function addMovingAverage(chart, avgWindow) {
+  period = avgWindow;
+  movingAverageRatio = []
+  const getAverage = (data) => data.reduce((acc, val) => acc + val.y, 0) / data.length;
+  for (var i = 0; len = deltaRatio.length, i + period - 1 < len; i++) {
+    movingAverageRatio.push({
+      x: new Date(deltaRatio[i].x),
+      y: round(getAverage(deltaRatio.slice(i, i + period)), 2)
+    });
+  }
+
+
+  chart.data.datasets.push({
+    label: 'movingAverageRatio',
+    data: movingAverageRatio,
+    borderWidth: 5,
+    pointRadius: 3,
+    pointHoverRadius: 5,
+    backgroundColor: "rgba(0,0,0,0.2)",
+    borderColor: "#000000",
+    fill: true,
+    tension: 0,
+    showLine: true,
+    yAxisID: "y-axis-0",
+  });
+  myChart.update();
 }
