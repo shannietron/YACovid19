@@ -143,7 +143,8 @@ function createChart() {
         xAxes: [{
           type: 'time',
           offset: true,
-          stacked: true
+          stacked: true,
+          barPercentage:0.6
         }],
         yAxes: [{
           id: 'y-axis-1',
@@ -272,7 +273,7 @@ function addMovingAverage(chart, avgWindow) {
 
 
   chart.data.datasets.push({
-    label: 'movingAverageRatio',
+    label: 'Moving Average Positive Ratio ('+period + ' day)',
     data: movingAverageRatio,
     borderWidth: 5,
     pointRadius: 3,
