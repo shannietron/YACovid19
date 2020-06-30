@@ -6,6 +6,10 @@ var deltaPos = [];
 var deltaDeaths = [];
 var unconfirmed = [];
 var deltaNeg = [];
+var type = 'linear';
+var movingAverageRatio = [];
+
+
 var myChart;
 state_test_data_url = "https://api.covid19india.org/state_test_data.json"
 createChart();
@@ -29,6 +33,7 @@ function deleteOldData() {
   deltaDeaths = [];
   unconfirmed = [];
   deltaNeg = [];
+  movingAverageRatio = [];
   myChart.destroy()
 }
 
@@ -206,6 +211,45 @@ async function getHistoricData(url, state) {
 
 function round(value, decimals) {
   return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+}
+
+document.getElementById('toggleScale').addEventListener('click', function() {
+  this.innerHTML = "change scale to " + type;
+  type = type === 'linear' ? 'logarithmic' : 'linear';
+  var yAxes = myChart.options.scales.yAxes;
+  yAxes[0].type = type;
+  myChart.update();
+});
+
+document.getElementById('addMovingAverage').addEventListener('click', function() {
+  avgWindowInput = parseInt(document.getElementById('avgWindowInput').value)
+  addMovingAverage(myChart, avgWindowInput);
+});
+
+function addMovingAverage(chart, avgWindow) {
+  period = avgWindow;
+  movingAverageRatio = []
+  const getAverage = (data) => data.reduce((acc, val) => acc + val.y, 0) / data.length;
+  for (var i = 0; len = deltaRatio.length, i + period - 1 < len; i++) {
+    movingAverageRatio.push({
+      x: new Date(deltaRatio[i].x),
+      y: round(getAverage(deltaRatio.slice(i, i + period)), 2)
+    });
+  }
+  chart.data.datasets.push({
+    label: 'Moving Average Positive Ratio ('+period + ' day)',
+    data: movingAverageRatio,
+    borderWidth: 5,
+    pointRadius: 3,
+    pointHoverRadius: 5,
+    backgroundColor: "rgba(0,0,0,0.2)",
+    borderColor: "#000000",
+    fill: true,
+    tension: 0,
+    showLine: true,
+    yAxisID: "y-axis-0",
+  });
+  myChart.update();
 }
 
 

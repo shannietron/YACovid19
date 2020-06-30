@@ -93,9 +93,10 @@
     <option value="Uttarakhand">Uttarakhand</option>
     <option value="West Bengal">West Bengal</option>
   </select>
-
+  <button id="toggleScale">change scale to logarithmic</button>
+  <input type="number" id="avgWindowInput" name="averageWindow" min="1" max="30" value="3">
+  <button id="addMovingAverage">Moving Average</button>
   <canvas style="height:800px" id="Covid19India"></canvas>
-
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
