@@ -170,7 +170,7 @@ function createChart() {
           type: 'linear',
           position: 'left',
           ticks: {
-            max: maxRatio,
+            max: 1,
             min: 0
           },
           gridLines: {
@@ -245,7 +245,7 @@ async function getHistoricData(url, state) {
       }
     }
   }
-  maxRatio = round(Math.max.apply(null, deltaRatio.map(item => item.y)), 2) + 0.05
+  myChart.options.scales.yAxes[1].ticks.max = Math.min(round(Math.max.apply(null, deltaRatio.map(item => item.y)), 2) + 0.05,1)
   myChart.update();
 }
 
