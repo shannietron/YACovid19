@@ -7,6 +7,7 @@ var deltaHosp = [];
 var movingAverageRatio = [];
 var myChart;
 var type = 'linear';
+var maxRatio;
 
 createChart();
 // Plot US data when we start
@@ -50,25 +51,42 @@ function createChart() {
     type: 'line',
     data: {
       datasets: [{
-          label: 'Daily positive to daily test ratio',
-          data: deltaRatio,
-          borderWidth: 0,
+          label: 'Daily Hospitalization',
+          data: deltaHosp,
+          borderWidth: 1,
           pointRadius: 3,
           pointHoverRadius: 5,
-          backgroundColor: "rgba(255,0,0,0.1)",
-          borderColor: "#fc0107",
+          backgroundColor: "#8c9ec5",
+          borderColor: "#6886c5",
           fill: true,
           tension: 0,
           showLine: true,
+          type: 'line',
+          yAxisID: "y-axis-1",
+          order: 1
+        },
+        {
+          label: 'Daily positive to daily test ratio',
+          data: deltaRatio,
+          borderWidth: 2,
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          backgroundColor: "rgba(200,0,0,0.1)",
+          borderColor: "#fc0107",
+          fill: false,
+          tension: 0,
+          showLine: true,
           yAxisID: "y-axis-0",
+          order: 1
+
         },
         {
           label: 'Cumulative positive test ratio',
           data: ratio,
-          borderWidth: 0,
+          borderWidth: 2,
           pointRadius: 3,
           pointHoverRadius: 5,
-          backgroundColor: "rgba(0,0,255,0.1)",
+          backgroundColor: "rgba(0,0,200,0.1)",
           borderColor: "blue",
           fill: true,
           tension: 0,
@@ -88,7 +106,9 @@ function createChart() {
           showLine: true,
           type: 'bar',
           yAxisID: "y-axis-1",
-          stack: "cases"
+          stack: "cases",
+          order: 6
+
         },
         {
           label: 'Daily Negative Tests',
@@ -103,7 +123,8 @@ function createChart() {
           showLine: true,
           type: 'bar',
           yAxisID: "y-axis-1",
-          stack: "cases"
+          stack: "cases",
+          order: 6
         },
         {
           label: 'Daily Deaths',
@@ -118,20 +139,7 @@ function createChart() {
           showLine: true,
           type: 'bar',
           yAxisID: "y-axis-1",
-        },
-        {
-          label: 'Daily Hospitalization',
-          data: deltaHosp,
-          borderWidth: 1,
-          pointRadius: 3,
-          pointHoverRadius: 5,
-          backgroundColor: "#8c9ec5",
-          borderColor: "#6886c5",
-          fill: true,
-          tension: 0,
-          showLine: true,
-          type: 'line',
-          yAxisID: "y-axis-1",
+          hidden: true
         },
       ]
     },
@@ -144,7 +152,6 @@ function createChart() {
           type: 'time',
           offset: true,
           stacked: true,
-          barPercentage:0.6
         }],
         yAxes: [{
           id: 'y-axis-1',
@@ -156,14 +163,14 @@ function createChart() {
             labelString: 'Number of Cases'
           },
           ticks: {
-            stepSize: 1000
+            stepSize: 50000
           },
         }, {
           id: 'y-axis-0',
           type: 'linear',
           position: 'left',
           ticks: {
-            max: 1,
+            max: maxRatio,
             min: 0
           },
           gridLines: {
@@ -238,7 +245,7 @@ async function getHistoricData(url, state) {
       }
     }
   }
-
+  maxRatio = round(Math.max.apply(null, deltaRatio.map(item => item.y)), 2) + 0.05
   myChart.update();
 }
 
@@ -273,15 +280,15 @@ function addMovingAverage(chart, avgWindow) {
 
 
   chart.data.datasets.push({
-    label: 'Moving Average Positive Ratio ('+period + ' day)',
+    label: 'Moving Average Positive Ratio (' + period + ' day)',
     data: movingAverageRatio,
-    borderWidth: 5,
-    pointRadius: 3,
+    borderWidth: 3,
+    pointRadius: 0,
     pointHoverRadius: 5,
     backgroundColor: "rgba(0,0,0,0.2)",
     borderColor: "#000000",
     fill: true,
-    tension: 0,
+    tension: 0.4,
     showLine: true,
     yAxisID: "y-axis-0",
   });
