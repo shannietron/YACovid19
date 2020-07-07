@@ -7,7 +7,6 @@ var deltaHosp = [];
 var movingAverageRatio = [];
 var myChart;
 var type = 'linear';
-var maxRatio;
 
 createChart();
 // Plot US data when we start
@@ -43,6 +42,12 @@ function deleteOldData() {
 
 function setStateHeader(state) {
   document.getElementById('stateHeader').innerHTML = state;
+}
+
+function writeNumbers(state) {
+  document.getElementById('deltaRatio').innerHTML = 'Daily Positive Rate: ' + (deltaRatio[0].y * 100) + '%';
+  document.getElementById('newCases').innerHTML = 'New Positives :' + (deltaPos[0].y);
+
 }
 
 function createChart() {
@@ -245,7 +250,7 @@ async function getHistoricData(url, state) {
       }
     }
   }
-  myChart.options.scales.yAxes[1].ticks.max = Math.min(round(Math.max.apply(null, deltaRatio.map(item => item.y)), 2) + 0.05,1)
+  myChart.options.scales.yAxes[1].ticks.max = Math.min(round(Math.max.apply(null, deltaRatio.map(item => item.y)), 2) + 0.05, 1)
   myChart.update();
 }
 

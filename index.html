@@ -6,6 +6,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>YACovid19</title>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-31591247-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-31591247-2');
+  </script>
+
 </head>
 
 <body>
@@ -112,14 +125,18 @@
   <button id="toggleScale">change scale to logarithmic</button>
   <input type="number" id="avgWindowInput" name="averageWindow" min="1" max="30" value="3">
   <button id="addMovingAverage">Moving Average</button>
+  <h2 id="deltaRatio">
+    </h3>
+    <h2 id="newCases">
+      </h3>
 
-  <canvas style="height:800px" id="Covid19"></canvas>
+      <canvas style="height:800px" id="Covid19"></canvas>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.4"></script>
-  <script src="main.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.4"></script>
+      <script src="main.js"></script>
 </body>
 
 </html>
