@@ -7,6 +7,7 @@ var deltaHosp = [];
 var movingAverageRatio = [];
 var myChart;
 var type = 'linear';
+var defaultMovingAverage = 7;
 
 createChart();
 // Plot US data when we start
@@ -20,12 +21,14 @@ function updateState(selectedState) {
     createChart();
     getHistoricData("https://covidtracking.com/api/v1/us/daily.json", state);
     setStateHeader("United States");
+
   } else {
     stateName = selectedState.options[selectedState.selectedIndex].text;
     deleteOldData();
     createChart();
     getHistoricData("https://covidtracking.com/api/v1/states/daily.json", state);
     setStateHeader(stateName);
+
   }
 }
 
@@ -73,16 +76,16 @@ function createChart() {
         {
           label: 'Daily positive to daily test ratio',
           data: deltaRatio,
-          borderWidth: 2,
-          pointRadius: 3,
+          borderWidth: 1,
+          pointRadius: 1,
           pointHoverRadius: 5,
           backgroundColor: "rgba(200,0,0,0.1)",
-          borderColor: "#fc0107",
+          borderColor: "#800040",
           fill: false,
           tension: 0,
           showLine: true,
           yAxisID: "y-axis-0",
-          order: 1
+          order: 1,
 
         },
         {
@@ -97,6 +100,7 @@ function createChart() {
           tension: 0,
           showLine: true,
           yAxisID: "y-axis-0",
+          hidden: true
         },
         {
           label: 'Daily Positives',
@@ -251,6 +255,7 @@ async function getHistoricData(url, state) {
     }
   }
   myChart.options.scales.yAxes[1].ticks.max = Math.min(round(Math.max.apply(null, deltaRatio.map(item => item.y)), 2) + 0.05, 1)
+  addMovingAverage(myChart, defaultMovingAverage);
   myChart.update();
 }
 
@@ -290,7 +295,7 @@ function addMovingAverage(chart, avgWindow) {
     borderWidth: 3,
     pointRadius: 0,
     pointHoverRadius: 5,
-    backgroundColor: "rgba(0,0,0,0.2)",
+    backgroundColor: "rgba(0,0,0,0)",
     borderColor: "#000000",
     fill: true,
     tension: 0.4,
