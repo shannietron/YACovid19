@@ -11,7 +11,7 @@ var defaultMovingAverage = 7;
 
 createChart();
 // Plot US data when we start
-getHistoricData("https://covidtracking.com/api/v1/us/daily.json", "US");
+getHistoricData("https://api.covidtracking.com/api/v1/us/daily.json", "US");
 
 
 function updateState(selectedState) {
@@ -19,14 +19,14 @@ function updateState(selectedState) {
   if (state == 'US') {
     deleteOldData();
     createChart();
-    getHistoricData("https://covidtracking.com/api/v1/us/daily.json", state);
-    setStateHeader("United States");
+    getHistoricData("https://api.covidtracking.com/api/v1/us/daily.json", state);
+    setStateHeader("USA");
 
   } else {
     stateName = selectedState.options[selectedState.selectedIndex].text;
     deleteOldData();
     createChart();
-    getHistoricData("https://covidtracking.com/api/v1/states/daily.json", state);
+    getHistoricData("https://api.covidtracking.com/api/v1/states/daily.json", state);
     setStateHeader(stateName);
 
   }
